@@ -1,0 +1,347 @@
+[
+    {
+        "id": "c5e3d703.f87b48",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "920bde99.59108",
+        "type": "mqtt out",
+        "z": "c5e3d703.f87b48",
+        "name": "limit display",
+        "topic": "limit/state",
+        "qos": "1",
+        "retain": "true",
+        "broker": "4b87ef27.6f8ce",
+        "x": 849.2777862548828,
+        "y": 122,
+        "wires": []
+    },
+    {
+        "id": "438744ce.bf15ec",
+        "type": "udp in",
+        "z": "c5e3d703.f87b48",
+        "name": "orientation_vals(udp port 38k)",
+        "iface": "",
+        "port": "38000",
+        "ipv": "udp4",
+        "multicast": "false",
+        "group": "",
+        "datatype": "buffer",
+        "x": 138,
+        "y": 49.5,
+        "wires": [
+            [
+                "8787baac.8f0898",
+                "90db94eb.0fe808",
+                "322e4a17.13e2f6"
+            ]
+        ]
+    },
+    {
+        "id": "8787baac.8f0898",
+        "type": "function",
+        "z": "c5e3d703.f87b48",
+        "name": "limit check (200 deg)",
+        "func": "var payload = msg.payload;\nvar x2 =payload.toString().split(\",\");\nvar endval;\nif (parseInt(x2[3])>200)\n{endval = \"beyond limit\";\n}\nelse\n{endval = \"within limit\";\n}\nmsg.payload = endval;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 453.00000762939453,
+        "y": 48.749999046325684,
+        "wires": [
+            [
+                "920bde99.59108",
+                "881658f5.faf9d8",
+                "2722b480.b7c58c",
+                "eb93e31c.06d35",
+                "fd5d0999.1196a8"
+            ]
+        ]
+    },
+    {
+        "id": "620c3d4c.b735d4",
+        "type": "ui_chart",
+        "z": "c5e3d703.f87b48",
+        "name": "",
+        "group": "a2a15c56.cf525",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "angle values",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "outputs": 1,
+        "x": 117.8888931274414,
+        "y": 514.4167537689209,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "90db94eb.0fe808",
+        "type": "function",
+        "z": "c5e3d703.f87b48",
+        "name": "visual processing",
+        "func": "var payload = msg.payload;\nvar x2 =payload.toString().split(\",\");\nmsg.payload = parseInt(x2[3])\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 130.69445037841797,
+        "y": 176.19444274902344,
+        "wires": [
+            [
+                "620c3d4c.b735d4",
+                "fcf5e6ac.5f1888",
+                "423e08ab.6dcf18"
+            ]
+        ]
+    },
+    {
+        "id": "881658f5.faf9d8",
+        "type": "ui_text",
+        "z": "c5e3d703.f87b48",
+        "group": "a2a15c56.cf525",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Warn state",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "x": 119.27790832519531,
+        "y": 364.75000286102295,
+        "wires": []
+    },
+    {
+        "id": "2722b480.b7c58c",
+        "type": "function",
+        "z": "c5e3d703.f87b48",
+        "name": "string to logic",
+        "func": "payload = msg.payload\nif (payload == \"beyond limit\" )\n{msg.payload = 1;\n}\nelse\n{msg.payload = 0;}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 850.8889274597168,
+        "y": 186.47223091125488,
+        "wires": [
+            [
+                "414857dd.b89128"
+            ]
+        ]
+    },
+    {
+        "id": "414857dd.b89128",
+        "type": "mqtt out",
+        "z": "c5e3d703.f87b48",
+        "name": "limit boolstate publisher",
+        "topic": "limit/boolstate",
+        "qos": "1",
+        "retain": "true",
+        "broker": "4b87ef27.6f8ce",
+        "x": 884.7777862548828,
+        "y": 255.08331489562988,
+        "wires": []
+    },
+    {
+        "id": "eb93e31c.06d35",
+        "type": "debug",
+        "z": "c5e3d703.f87b48",
+        "name": "rotation limit",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 849.0555534362793,
+        "y": 71.6389217376709,
+        "wires": []
+    },
+    {
+        "id": "fcf5e6ac.5f1888",
+        "type": "debug",
+        "z": "c5e3d703.f87b48",
+        "name": "angle values",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 119.94447326660156,
+        "y": 411.2500047683716,
+        "wires": []
+    },
+    {
+        "id": "423e08ab.6dcf18",
+        "type": "ui_text",
+        "z": "c5e3d703.f87b48",
+        "group": "a2a15c56.cf525",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "angle values",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "x": 116.00000381469727,
+        "y": 459.50000381469727,
+        "wires": []
+    },
+    {
+        "id": "2c69ed26.184eb2",
+        "type": "function",
+        "z": "c5e3d703.f87b48",
+        "name": "Tstamp_angle jsonify",
+        "func": "var d = new Date();\nvar t = d.getTime();\npayload={\"time\":t,\"payload\":msg.payload,\"topic\":msg.topic};\n//msg.payload=JSON.stringify(payload);\nmsg.payload=payload;\n//msg.filename=\"/home/pi/logs/s1.txt\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 464.25000762939453,
+        "y": 367.25000381469727,
+        "wires": [
+            [
+                "689e9e0e.29faa"
+            ]
+        ]
+    },
+    {
+        "id": "689e9e0e.29faa",
+        "type": "json",
+        "z": "c5e3d703.f87b48",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 415.00000762939453,
+        "y": 434.5000057220459,
+        "wires": [
+            [
+                "5193c02b.778f"
+            ]
+        ]
+    },
+    {
+        "id": "5193c02b.778f",
+        "type": "file",
+        "z": "c5e3d703.f87b48",
+        "name": "",
+        "filename": "C:\\Users\\siddh\\Desktop\\rotlogx2.log",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "x": 504.00003814697266,
+        "y": 501.7500057220459,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "322e4a17.13e2f6",
+        "type": "function",
+        "z": "c5e3d703.f87b48",
+        "name": "string_to_int",
+        "func": "var payload = msg.payload;\nvar x2 =payload.toString().split(\",\");\nvar endval;\nvar k2 = parseInt(x2[3]);\nmsg.payload = k2;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 436.75000762939453,
+        "y": 302.00000381469727,
+        "wires": [
+            [
+                "2c69ed26.184eb2"
+            ]
+        ]
+    },
+    {
+        "id": "a6e96ade.f6a8a8",
+        "type": "ui_audio",
+        "z": "c5e3d703.f87b48",
+        "name": "",
+        "group": "a2a15c56.cf525",
+        "voice": "en-US",
+        "always": true,
+        "x": 874,
+        "y": 338,
+        "wires": []
+    },
+    {
+        "id": "fd5d0999.1196a8",
+        "type": "function",
+        "z": "c5e3d703.f87b48",
+        "name": "string to logic",
+        "func": "payload = msg.payload\nif (payload == \"beyond limit\" )\n{return msg;}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 649,
+        "y": 270,
+        "wires": [
+            [
+                "a6e96ade.f6a8a8"
+            ]
+        ]
+    },
+    {
+        "id": "4b87ef27.6f8ce",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "SHIFTR2",
+        "broker": "broker.shiftr.io",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "1",
+        "closeRetain": "true",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "a2a15c56.cf525",
+        "type": "ui_group",
+        "z": "",
+        "name": "Default",
+        "tab": "2e68af90.ead7e",
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "2e68af90.ead7e",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
